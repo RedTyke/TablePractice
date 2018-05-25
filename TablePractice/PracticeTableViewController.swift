@@ -12,8 +12,47 @@ class PracticeTableViewController: UITableViewController {
 
     var items = [ListItem]()
     
+    @IBAction func addItem() {
+        
+        // Add item to data modl
+        
+        let newRowNIndex = items.count
+        
+        let item = ListItem(name: "Samson", checked: true)
+        items.append(item)
+        
+        // Add item to table
+        
+        let indexPath = IndexPath(row: newRowNIndex, section: 0)
+        var indexPaths = [IndexPath]()
+        
+        indexPaths.append(indexPath)
+        
+       tableView.insertRows(at: indexPaths, with: .automatic)
+        
+    }
+    
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        
+        let rowNumber = indexPath.row
+        
+        // Delete item from data model
+        items.remove(at: rowNumber)
+    
+        // remove item from table
+        var indexPaths = [IndexPath]()
+        indexPaths.append(indexPath)
+        
+        tableView.deleteRows(at: indexPaths, with: .automatic)
+        
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationController?.navigationBar.prefersLargeTitles = true
 
         let listItem1 = ListItem(name: "Ethan", checked: true)
         items.append(listItem1)
@@ -28,7 +67,6 @@ class PracticeTableViewController: UITableViewController {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     // MARK: - Table view data source
@@ -59,7 +97,7 @@ class PracticeTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) {
-            var item = items[indexPath.row]
+            let item = items[indexPath.row]
             
             print("Checked Pre: \(item.checked)")
             item.toggledChecked()
@@ -81,11 +119,6 @@ class PracticeTableViewController: UITableViewController {
     }
     
     
-/*    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        data[indexPath.row][1] = !data[indexPath.row][1]
-        
-    }
-*/
- 
+
  
 }
