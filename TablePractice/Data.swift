@@ -8,21 +8,22 @@
 
 import Foundation
 
-public class ListItem {
+public class ListItem: NSObject {
     
     var name = ""
     var checked = true
     
-    init(name: String, checked: Bool) {
+   // init(name: String, checked: Bool) {
         
-        self.name = name
-        self.checked = checked
-    }
+   //     self.name = name
+   //     self.checked = checked
+
     
+    // Q: DO we need an init? aDecoder?  Otherwise cannot declare a ListItem without initialising
     
-    func toggledChecked() {
-        
+    func toggleChecked() {
         checked = !checked
+        
     }
     
 }
