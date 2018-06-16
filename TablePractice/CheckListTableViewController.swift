@@ -8,20 +8,27 @@
 
 import UIKit
 
-class PracticeTableViewController: UITableViewController, ItemDetailViewControllerDelegate {
+class CheckListTableViewController: UITableViewController, ItemDetailViewControllerDelegate {
     
     var items = [ListItem]()
+    var checklist: CheckList! // Implicitly unwrapped optional as will be set by PrepareForSegue when screen is called
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .never
+       
         
         // Default data in table
         let listItem1 = ListItem()
         listItem1.name = "Ethan"
         listItem1.checked = true
         items.append(listItem1)
+        
+        print("Documents folder is \(documentsDirectory())")
+        print("Data file path is \(dataFilePath())")
+        
+        title = checklist.title
     
     }
     
@@ -64,6 +71,8 @@ class PracticeTableViewController: UITableViewController, ItemDetailViewControll
         var indexPaths = [IndexPath]()
         indexPaths.append(indexPath)
         tableView.deleteRows(at: indexPaths, with: .automatic)
+        
+        SaveCheckListItems()    
     }
     
     // MARK: Private methods
@@ -105,11 +114,13 @@ class PracticeTableViewController: UITableViewController, ItemDetailViewControll
         tableView.insertRows(at: indexPaths, with: .automatic)
         
         navigationController?.popViewController(animated: true)
+        
+        SaveCheckListItems()
     }
     
     func ItemDetailViewController(_ controller: ItemDetailViewController, didFinishEditing item: ListItem) {
         // Find index for Edited cell (using cell before changed)
-        // ListItem needs to be Equatable
+        // ListItem needs to be Equatable (done by conforming to NSObject)
         if let index = items.index(of: item) {
             let indexPath = IndexPath(item: index, section: 0)
             if let cell = tableView.cellForRow(at: indexPath) {
@@ -118,13 +129,9 @@ class PracticeTableViewController: UITableViewController, ItemDetailViewControll
             
         }
         
-        
-        // Change text in data model for updated Cell
-        
-        // Change cell in table
-        
         navigationController?.popViewController(animated: true)
     
+        SaveCheckListItems()
     }
     
     
@@ -146,12 +153,39 @@ class PracticeTableViewController: UITableViewController, ItemDetailViewControll
                 
                 controller.itemToEdit = items[indexPath.row]
             }
-            
-            
         }
-        
-        
     }
     
+    
+    
+    // MARK: Data Management
+    
+    func documentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
+    }
+    
+    func dataFilePath() -> URL {
+      // return documentsDirectory().appendPathComponent("TablePractice.plist")
+        return documentsDirectory().appendingPathComponent("TablePractice.plist")
+    }
+    
+    
+    func SaveCheckListItems() {
+        let encoder = PropertyListEncoder()
+        do {
+            
+            let data = try encoder.encode(items)
+            try data.write(to: dataFilePath(), options: Data.WritingOptions.atomic)
+            
+        } catch {
+            
+            print("Error encoding item array")
+        }
+    }
+    
+    func LoadCheckListItems() {
+        
+    }
     
 }
